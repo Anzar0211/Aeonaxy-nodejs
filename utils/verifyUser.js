@@ -53,7 +53,7 @@ const verifyUser=async (req, res, next) =>{
 
         const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '3m' });
         const mailSubject=`Please Verify your account`;
-        const verificationLink = `http://localhost:3000/api/v1/auth/verifyEmail?token=${verificationToken}`;
+        const verificationLink = `https://aeonaxy-nodejs-8des.onrender.com/api/v1/auth/verifyEmail?token=${verificationToken}`;
         await sendEmail(email,mailSubject,verificationLink);
         console.log('Verification email sent successfully');
         next();

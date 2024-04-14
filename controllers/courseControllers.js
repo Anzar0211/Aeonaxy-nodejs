@@ -1,4 +1,5 @@
-const sql=require('../db.js')
+const sql=require('../db.js');
+const filterFunction  = require('../utils/filters');
 
 //Creating a new Course(Exclusive for admin)
 
@@ -54,29 +55,11 @@ const getCourseById=async(req,res,next)=>{
 //Get all courses with features like  pagination and search (Public route)
 const getAllCourses=async(req,res,next)=>{
     try{
-        let sqlQuery
         const {searchTerm,category, level, popularity, page = 1, limit = 10 } = req.query;
         const offset = (page - 1) * limit;
-        if(searchTerm && !popularity){
-            sqlQuery=await sql `SELECT * FROM courses WHERE title ILIKE '%' || ${searchTerm} || '%' LIMIT ${limit} OFFSET ${offset}`;
-            
-        }
-        else if(searchTerm && popularity==1){
-            sqlQuery=await sql `SELECT * FROM courses WHERE title ILIKE '%' || ${searchTerm} || '%' ORDER BY popularity DESC LIMIT ${limit} OFFSET ${offset}`;
-        }
-        else if(category && !popularity){
-            sqlQuery=await sql`SELECT * FROM courses WHERE title LIKE ${searchTerm} AND category=${category} LIMIT ${limit}  OFFSET ${offset};`
-        }
-        else if (!category && popularity==1) {
-            sqlQuery=await sql`SELECT * FROM courses ORDER BY popularity DESC LIMIT ${limit} OFFSET  ${offset};`;
-        }
-        else if (category && popularity==1){
-            sqlQuery=await sql`SELECT * FROM courses WHERE category=${category} ORDER BY popularity DESC LIMIT ${limit} OFFSET  ${offset};`;
-        }
-        else{
-            sqlQuery=await sql`SELECT * FROM courses;`
-        } 
-        res.status(200).json(sqlQuery);
+        const results=await filterFunction(searchTerm,category,level,popularity,offset,10)
+        console.log('ALL COURSES FETCHED SUCCESSFULLY');
+        res.status(200).json(results);
     }
     catch(e){
         return res.status(400).json('Error in retrieving data');
