@@ -1,12 +1,14 @@
 const {Router}=require('express');
 const router=Router();
-const {signup,signin,verifySuccess,confirmationPage}=require('../controllers/authControllers');
-const { verifyUser } = require('../utils/verifyUser');
+const {signup,signin,resetPasswordReq,resetPasswordFunc}=require('../controllers/authControllers');
+// verifySuccess,
+const { verifyUser,verifySuccess, verifyToken } = require('../utils/verifyUser');
 
 router.post('/signup',verifyUser,signup);
-router.get('/verifyUser',verifySuccess);
-router.get('/confirmation',confirmationPage)
+router.get('/verifyEmail',verifySuccess);
 router.post('/signin',signin);
+router.post('/resetPassword',verifyToken,resetPasswordReq);
+router.put('/newPassword',resetPasswordFunc)
 
 
 

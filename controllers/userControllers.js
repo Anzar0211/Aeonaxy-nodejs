@@ -1,26 +1,40 @@
 const sql=require('../db.js')
 const bcryptjs=require('bcryptjs');
 const {getUsersQuery,updateUsersQuery}=require('../queries/userQueries');
-const { errorHandler } = require('../utils/error.js');
+
+
+//Get all users details except password(Exclusive for admin)
 const getUsers=async(req,res,next)=>{
     if(!req.user.isadmin){
+        console.log('Not allowed to perform this action');
         res.status(401).send('You are not authorised to perform this operation')
-        return(next(errorHandler(401,'UNAUTHORIZED')))
     }
-   try {
+    try {
     const users=await getUsersQuery();
-    const userswithoutpassword=users.map((user) =>{
-        const{password,...rest}=user;
-        return rest;
-    })
-    
-    res.status(200).json(userswithoutpassword);
-   } catch (error) {
+        const userswithoutpassword=users.map((user) =>{
+            const{password,...rest}=user;
+            return rest;
+        })
+        
+        res.status(200).json(userswithoutpassword);
+    } catch (error) {
         console.error('Error during fetching:', error.message);
         res.status(500).send('Internal server error');
-   }
+    }
 }
 
+
+//Sign out a currently signed in user
+const signOut=(req,res,next)=>{
+    try{
+        res.clearCookie('access_token').status(200).json('User has been Signed Out!!')
+    }catch(e){
+        console.log(e.message);
+        return res.status(404).send('Something went wrong while signing out!')
+    }
+}
+
+//get a particular users information by id(Public route)
 const getUserById=async(req,res,next)=>{
     const{id}=req.params;
     try {
@@ -38,112 +52,41 @@ const getUserById=async(req,res,next)=>{
     }
 }
 
-
+//Update  the profile of a logged-in user
 const updateUser=async(req,res,next)=>{
-    const user=req.body;
-    // const{name,email,password,profile_picture,phone}=req.body;
-    const{id}=req.params;
-    const updates = {};
-   try {
-    let resp;
-    // if(req.body.name){
-    //     updates.name=req.body.name;
-    // }
-    // if(req.body.email){
-    //     updates.email=req.body.email
-    // }
-    //  if (req.body.password) {
-    //     updates.password = bcryptjs.hashSync(req.body.password, 10);
-    // }
-    // if (req.body.profile_picture) {
-    //     updates.profile_picture = req.body.profile_picture;
-    // }
-    // if (req.body.phone) {
-    //     updates.phone = req.body.phone;
-    // }
-    const keys = Object.keys(user);
-    // console.log(keys);
-    const formattedKeys = keys.map(key => `'${key}'`).join(', ');
-    // console.log(setQuery);
-    // console.log(`
-    //     UPDATE users SET ${sql(updates,formattedKeys)} WHERE id=${id};   
-    // `);
-    resp=await sql `
-        UPDATE users SET ${sql(user,...formattedKeys)} WHERE id=${id};
-    `
-    // if (req.body?.name || req.body?.email || req.body?.password || req.body?.profile_picture || req.body?.phone) {
-    //   // Include username update
+    const{name,email,password,profile_picture,phone}=req.body;
+    let hashedPass;
+    try {
+        const id=req.user.id;
+        if(name){
+            await sql `UPDATE users SET name=${name} where id=${id}`
+        }
+        if(email){
+            await sql `UPDATE users SET email=${email} where id=${id}`
+        }
+        if(password){
+            hashedPass=bcryptjs.hashSync(password,10);
+            await sql `UPDATE users SET password=${hashedPass} where id=${id}`
+        }
+        if(profile_picture){
+            await sql `UPDATE users SET profile_picture=${profile_picture} where id=${id}`
+        }
+        if(phone){
+            await sql `UPDATE users SET phone=${phone} where id=${id}`
+        }   
         
-    //     if(req.body?.password){
-    //         user.password=bcryptjs.hashSync(req.body.password,10);
-    //     }
-    //     resp=await sql`
-    //         update users set ${sql(user, 'name','email','password','profile_picture','phone')} where
-    //         where id = ${ id }`
-    // }
-
-    // if (req.body.email) {
-    //   // Include email update
-    //         console.log(`
-    //     update users set ${
-    //         sql(user, 'email')
-    //     }
-    //     where id = ${ id }`);
-    //         resp=await sql`
-    //     update users set ${
-    //         sql(user, 'email')
-    //     }
-    //     where id = ${ id }`
-      
-    // }
-    
-
-//     if (profile_picture) {
-//       // Include profile picture update
-//       resp=await sql`
-//   update users set ${
-//     sql(user, 'profile_picture')
-//   }
-//   where id = ${ id }`
-      
-//     }
-    
-
-//     if (password) {
-//       // Validate password
-//       if (password.length < 6) {
-//         return res.status(404).send('Password must be at least 6 characters')
-//       }
-//       // Hash the password and include hashed password update
-//       user.password=bcryptjs.hashSync(password,10);
-//       resp=await sql`
-//   update users set ${
-//     sql(user, 'password')
-//   }
-//   where id = ${ id }`
-      
-//     }
-    
-
-
-
-    
-
-//     if (res.length === 0) {
-//       return res.status(404).send('User not found')
-//     }
-
-//     const { password, ...rest } = resp[0];
-    res.status(200).json(resp);
-  } catch (error) {
-    console.error('Error during fetching:', error.message);
-    res.status(500).send('Internal server error');
-  }
+        console.log('USER UPDATED SUCCESSFULLY');
+        res.status(200).json('USER UPDATED SUCCESSFULLY');
+    } catch (error) {
+        console.log('Could not update user');
+        return res.status(400).json('INTERNAL SERVER ERROR')
+    }       
 }
 
 module.exports={
     getUsers,
     updateUser,
-    getUserById
+    getUserById,
+    signOut
 }
 
