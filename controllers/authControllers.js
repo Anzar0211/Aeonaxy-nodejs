@@ -66,7 +66,7 @@ const resetPasswordReq=async(req,res,next)=>{
             return res.status(404).send('Email not found');    
         }
         const resetToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const resetLink = `https://aeonaxy-nodejs-8des.onrender.com/api/v1/auth/newPassword?token=${resetToken}`;
+        const resetLink = `https://aeonaxy-nodejs-41m4.onrender.com/api/v1/auth/newPassword?token=${resetToken}`;
         await sendEmail(email, 'Reset Your Password', resetLink);
         res.status(200).send('Reset password email sent');
         

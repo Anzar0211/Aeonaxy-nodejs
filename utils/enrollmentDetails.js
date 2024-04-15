@@ -12,7 +12,7 @@ const enrollmentDetails=async(req,res,next)=>{
 
         const content= `You have successfully Enrolled in the course ${enrolledCourse[0].title} in category ${enrolledCourse[0].category}with course id=${courseId}`;
 
-        const enrolledCourseLink=`https://aeonaxy-nodejs-8des.onrender.com/api/v1/courses/${courseId}`;
+        const enrolledCourseLink=`https://aeonaxy-nodejs-41m4.onrender.com/api/v1/courses/${courseId}`;
 
         await sendEmail(`${fetchEmail[0].email}`,content,enrolledCourseLink)
 
