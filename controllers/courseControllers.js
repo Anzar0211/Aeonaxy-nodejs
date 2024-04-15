@@ -112,11 +112,18 @@ const deleteCourse= async(req,res,next)=> {
     }
     try {
         const{id}=req.params;
-        const resp=await sql`
+        console.log(id);
+        
+        await sql`
             DELETE FROM courses WHERE id = ${id};
+        `
+        //ALSO DELETE FROM USER-ENROLLMENTS TABLE
+        await sql`
+            DELETE FROM user_course_enrollment WHERE course_id=${id}
         `
         res.status(200).send('deleted successfully')
     } catch (error) {
+        console.log(error.message);
         return res.status(400).send('Server Error')
     }
 }

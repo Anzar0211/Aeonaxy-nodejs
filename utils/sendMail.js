@@ -1,30 +1,35 @@
-const { Resend } = require("resend");
-const instanceResend = new Resend(process.env.KEY_RESEND);
-instanceResend.domains.create({ name: 'gmail.com' });
 
+const nodemailer = require("nodemailer");
 
-const sendEmail = async function (mailRecipient,mailSubject,verificationLink) {
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // true for 465, false for other ports
+  auth: {
+    user: process.env.EMAIL, // Your email address
+    pass: process.env.PASSWORD, // Your password
+  },
+});
+
+// async function to send email
+const sendEmail=async(mailRecipient,mailSubject,verificationLink)=> {
   try {
-    const { data, error } = await instanceResend.emails.send({
-      from: 'Acme <onboarding@resend.dev>',
-      to: [mailRecipient],
-      subject: mailSubject,
+    // send mail with defined transport object
+    const info = await transporter.sendMail({
+      from: '"Anzar Khan" <anzarkhan790@gmail.com>', // sender address
+      to: [mailRecipient], // list of receivers
+      subject: mailSubject, // Subject line
+      text: "System Generated Mail ", // plain text body
       html: `<p>${mailSubject}:</p>
-            <a href="${verificationLink}">${verificationLink}</a>`
+//             <a href="${verificationLink}">${verificationLink}</a>`, // html body
     });
 
-    if (error) {
-      throw new Error(error.message); // Throw error to be caught by the catch block
-    }
-
-    console.log('Email sent successfully:', data);
+    console.log("Message sent: %s", info.messageId);
   } catch (error) {
-    console.error('Error sending email:', error);
-    // Handle the error further if needed (e.g., log to file, send notification)
+    console.error("Error occurred:", error);
   }
-};
+}
 
-module.exports = sendEmail;
 
-// Example usage:
-// sendEmail('recipient@example.com');
+module.exports={sendEmail}
+

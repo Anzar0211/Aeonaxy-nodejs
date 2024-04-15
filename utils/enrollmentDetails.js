@@ -1,4 +1,4 @@
-const sendEmail = require("./sendMail");
+const {sendEmail} = require("./sendMail");
 const sql = require("../db");
 const enrollmentDetails=async(req,res,next)=>{
     try {

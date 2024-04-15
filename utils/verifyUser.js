@@ -1,7 +1,7 @@
 const jwt=require( 'jsonwebtoken' );
 const sql = require("../db");
 const nodeMailer=require("nodemailer");
-const sendEmail = require('./sendMail');
+const {sendEmail} = require('./sendMail');
 const {checkEmailExists,checkPhoneExists}=require('../queries/authQueries')
 
 

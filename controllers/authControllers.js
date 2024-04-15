@@ -2,7 +2,7 @@ const bcryptjs=require('bcryptjs');
 const{registerUser}=require('../queries/authQueries')
 const jwt=require("jsonwebtoken");
 const sql = require("../db");
-const sendEmail = require('../utils/sendMail');
+const {sendEmail} = require('../utils/sendMail');
 
 
 //Register User
