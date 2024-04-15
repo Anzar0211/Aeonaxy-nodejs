@@ -55,8 +55,9 @@ const verifyUser=async (req, res, next) =>{
         const mailSubject=`Please Verify your account`;
         const verificationLink = `https://aeonaxy-nodejs-41m4.onrender.com/api/v1/auth/verifyEmail?token=${verificationToken}`;
         const emailStatus=await sendEmail(email,mailSubject,verificationLink);
-        if(!emailStatus.success){
-            return  res.status(500).send(`Error sending Email`);
+        console.log(emailStatus);
+        if(!emailStatus){
+            return  res.status(500).send(`Error sending Email. Please ensure you have a valid email account`);
         }
         console.log('Verification email sent successfully');
         next();
