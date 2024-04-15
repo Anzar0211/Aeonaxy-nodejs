@@ -27,6 +27,7 @@ const sendEmail=async(mailRecipient,mailSubject,verificationLink)=> {
     console.log("Message sent: %s", info.messageId);
   } catch (error) {
     console.error("Error occurred:", error);
+    return res.status(400).json('Could not send email/Use a valid email account');
   }
 }
 
