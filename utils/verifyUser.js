@@ -26,6 +26,27 @@ const verifyToken=(req,res,next)=>{
 }
 
 
+//Resend a verification link to user's email if requested by the user
+const resendEmail=async(req,res,next)=>{
+    const{email}=req.body;
+    try{
+    if(!email){
+        return  res.status(400).json({msg:"Please provide an email"})
+    }
+    const emailExists=await sql `SELECT * FROM users WHERE email=${email}`
+    console.log(emailExists);
+    if(emailExists.length==0){
+        return res.status(400).json({msg:`The provided Email is not registered`})
+    }
+    const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '6h' });
+        const mailSubject=`Please Verify your account`;
+        const verificationLink = `https://aeonaxy-nodejs-41m4.onrender.com/api/v1/auth/verifyEmail?token=${verificationToken}`;
+        await sendEmail(email,mailSubject,verificationLink);
+        return res.status(200).send('Verification link sent to your email')
+    }catch(e){
+        return res.status(404).send('Could not send email')
+    }
+}
 
 //Send  email to user for verification of account
 const verifyUser=async (req, res, next) =>{
@@ -51,14 +72,10 @@ const verifyUser=async (req, res, next) =>{
         return res.status(400).send("Password should be at least 8 characters long and have alphanumeric characters!!!");
         }
 
-        const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '3m' });
+        const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '6h' });
         const mailSubject=`Please Verify your account`;
         const verificationLink = `https://aeonaxy-nodejs-41m4.onrender.com/api/v1/auth/verifyEmail?token=${verificationToken}`;
-        const emailStatus=await sendEmail(email,mailSubject,verificationLink);
-        console.log(emailStatus);
-        if(!emailStatus){
-            return  res.status(500).send(`Error sending Email. Please ensure you have a valid email account`);
-        }
+        await sendEmail(email,mailSubject,verificationLink);
         console.log('Verification email sent successfully');
         next();
     } catch (error) {
@@ -97,5 +114,6 @@ const verifySuccess=async(req,res)=>{
 module.exports={
     verifyToken,
     verifyUser,
-    verifySuccess
+    verifySuccess,
+    resendEmail
 }

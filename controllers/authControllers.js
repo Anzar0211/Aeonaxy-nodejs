@@ -24,6 +24,7 @@ const signin = async (req, res, next) => {
     if(req.cookies.access_token){
         return res.status(403).send({ auth : false, message: "A User is Already logged in,Please logout first to login with an other account" });
     }
+    
     const { email, password } = req.body;
     if (!email || !password || email === '' || password === '') {
         return res.status(400).json({ message: 'Please provide an email and a password' });
@@ -33,6 +34,10 @@ const signin = async (req, res, next) => {
             SELECT * FROM users
             WHERE email = ${email}
         `;
+        if(userData[0].email_verified===false){
+            console.log('Please verify your email to login to your account');
+            return res.status(403).json({message:'Please verify your email to login to your account by clicking on the verification link'});
+        }
         if (!userData || userData.length === 0) {
             return res.status(401).json({ message: "Authentication failed" })
         }
