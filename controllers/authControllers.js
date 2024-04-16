@@ -3,13 +3,17 @@ const{registerUser}=require('../queries/authQueries')
 const jwt=require("jsonwebtoken");
 const sql = require("../db");
 const {sendEmail} = require('../utils/sendMail');
-
+const uploadImage=require('../utils/cloudinary')
 
 //Register User
 const signup = async (req, res, next) => {
     const { name, email, password, profile_picture, phone } = req.body;  
     try {
         const hashedPass=bcryptjs.hashSync(password,10);
+        let profilePictureUrl;
+        if (profile_picture) {
+            profilePictureUrl = await uploadImage(profile_picture);
+        }
         const user=await registerUser(name, email, hashedPass, profile_picture, phone);
         return res.status(201).json({message:"Please verify your email by clicking on the link sent to your email account"})   
     } catch (error) {
