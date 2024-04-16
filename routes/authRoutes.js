@@ -5,7 +5,7 @@ const {limiter} = require('../utils/rateLimiter');
 const { verifyUser,verifySuccess, verifyToken, resendEmail } = require('../utils/verifyUser');
 
 router.post('/signup',limiter,verifyUser,signup);
-router.post('/requestEmailVerification',limiter,resendEmail)
+router.post('/requestEmailVerification',verifyToken,limiter,resendEmail)
 router.get('/verifyEmail',verifySuccess);
 router.post('/signin',signin);
 router.post('/resetPassword',verifyToken,resetPasswordReq);

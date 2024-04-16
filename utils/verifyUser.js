@@ -30,13 +30,13 @@ const verifyToken=(req,res,next)=>{
 const resendEmail=async(req,res,next)=>{
     const{email}=req.body;
     try{
+    const verifiedEmailRequest=await sql `SELECT email from users where id=${req.user.id}`;
+    //Checking whether the provided email is same as registered one or not 
+    if (verifiedEmailRequest[0].email !== email) {
+      return res.status(400).json({ msg: "The Email you entered does not match with your account." });
+    }
     if(!email){
         return  res.status(400).json({msg:"Please provide an email"})
-    }
-    const emailExists=await sql `SELECT * FROM users WHERE email=${email}`
-    console.log(emailExists);
-    if(emailExists.length==0){
-        return res.status(400).json({msg:`The provided Email is not registered`})
     }
     const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '6h' });
         const mailSubject=`Please Verify your account`;

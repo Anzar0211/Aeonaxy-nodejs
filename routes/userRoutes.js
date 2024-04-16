@@ -6,6 +6,6 @@ const { verifyToken } = require('../utils/verifyUser');
 router.get('/',verifyToken,getUsers);
 router.get('/:id',getUserById);
 router.put('/update/:id',verifyToken,updateUser);
-router.post('/signout',signOut);
+router.post('/signout',verifyToken,signOut);
 
 module.exports = router; 
