@@ -11,11 +11,13 @@ AUTH ROUTES
 
  
   {
+  
       "name":"YOUR USERNAME",
       "email":"YOUR EMAIL ID",                       //Enter a valid email id to recieve verification email
       "password":"YOUR PASSWORD",                     //Should be at least 8 characters and alphanumeric),,
       "profile_picture": "YOUR IMAGE URL",             //enter a valid image url to store your image in cloudinary database
       "phone":YOUR 10 DIGIT PHONE NUMBER
+      
   }
 
   
