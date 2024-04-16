@@ -59,6 +59,9 @@ const verifyUser=async (req, res, next) =>{
     if (!name || !email || !password || !profile_picture || !phone) {
         return res.status(400).send("ALL FIELDS REQUIRED");
     }
+    if(phone.length!=10){
+        return res.status(400).send('Phone number should be exactly 10 digits');
+    }
     try {
         const emailExists = await checkEmailExists(email);
         if (emailExists) {
