@@ -2,7 +2,7 @@ This is a course enrollment api where registered users can search for courses an
 It would be more intuitive and user friendly if the requests are sent through a API testing tool such as postman.
 The following are the the endpoints for the api.
 
- //NOTE THAT values within quotea are strings whereas without quotes are numeric values.For Example phone is a numeric value.
+ //NOTE THAT values within quotea are strings.
 
 AUTH ROUTES
 1) https://aeonaxy-nodejs-41m4.onrender.com/api/v1/auth/signup
@@ -16,7 +16,7 @@ AUTH ROUTES
       "email":"YOUR EMAIL ID",                       //Enter a valid email id to recieve verification email
       "password":"YOUR PASSWORD",                     //Should be at least 8 characters and alphanumeric),,
       "profile_picture": "YOUR IMAGE URL",             //enter a valid image url to store your image in cloudinary database
-      "phone":YOUR 10 DIGIT PHONE NUMBER
+      "phone":"YOUR 10 DIGIT PHONE NUMBER"
       
   }
 
@@ -80,7 +80,7 @@ AUTH ROUTES
       "email":"YOUR EMAIL ID",                       //Optional field
       "password":"YOUR PASSWORD",                    //Optional field
       "profile_picture": "YOUR IMAGE URL",           //Optional field
-      "phone":YOUR 10 DIGIT PHONE NUMBER             //Optional Field
+      "phone":"YOUR 10 DIGIT PHONE NUMBER"             //Optional Field
     
    } 
 
